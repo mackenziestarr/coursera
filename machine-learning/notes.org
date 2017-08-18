@@ -1,0 +1,251 @@
+#+LATEX_HEADER_EXTRA: \usepackage{amsmath}
+* Week 1
+** Intro
+A computer is said to learn from experience E with respect to task T,
+and some performance measure P, if its performance on T as measured by
+P improves with experience E.
+
+** Supervised Learning
+- Example problem given a dataset of houses where price is on the X
+  axis and sq. ft is on the Y axis, predict the price for a given
+  square footage.
+
+- You input is a data set with the "right" answers. The task is to
+  produce more of the "right" answers. Since you are trying to predict
+  a continuous value this is called a regression problem.
+
+- Knowing the best function to fit to your data is something you gain intuition for?
+
+- Classification problem: discrete output (0, 1, 2)
+- Regression problem: continuous output (0 - 2)
+
+- Support vector machines are a thing and they allow a computer to
+  deal with an infinite number of features.
+
+** Unsupervised Learning
+- We are given data that has few or no labels and the goal is to find
+  some structure in the data
+
+- Google News is an example of this clustering by un-labeled topic,
+  you don't know what the stories will be about in advanced
+
+- You don't know in advance any of the labels and you want the machine to label things for you
+
+- analyzing communications between computers in data center and
+  optimizing topology for clusters that frequency work together
+
+- applications of unsupervised learning:
+  - clustering
+  - separating voices out at a cocktail party ("cocktail party" algorithm) e.g. signal correlation
+
+** Model and Cost Function
+Notation:
+- input variables are often called features
+- (x,y) is a single training example
+- (x^i, y^i) the ith training example
+- the function that a learning algorithm produces is often called a hypothesis
+- training set -> learning algorithm -> h()
+  - h is a function that maps from x's to y's
+- Linear regression with one variable AKA Univarite linear regression
+
+- Hypothesis :: \(h_{\theta}(x) = \theta_{0} + \theta_{1}x\)
+- Parameters :: \(\theta_{0},\theta_{01}\)
+- Cost function :: \(J(\theta_{0},\theta_{1}) = \frac{1}{2m}\sum\limits_{i=1}^{m}(h_{\theta}(x^{(i)})-y^{(i)})^2\)
+- Goal :: minimize \(J(\theta_{0},\theta_{1})\)
+- This cost function is called the "squared error" or "mean squared
+  error" function and works well for a lot of linear regression
+  problems
+- You can get better intuition around the goal by simplifying to one
+  parameter \(\theta_{1}\) graphing \(h_{\theta}(x)\) with some inputs
+  you'll notice that the corresponding cost function graph for
+  \(\theta_{1}\) is a parabola converging on \(\theta_{1} = 1\).
+- The best possible line will be such so that the average squared
+  vertical distances of the scattered points from the line will be the
+  least. Ideally, the line should pass through all the points of our
+  training data set. In such a case, the value of J(θ0,θ1) will be 0
+- two parameters can be visualized on a 3D graph or in two dimensions
+  via a contour plot. We put θ0 on the x axis and θ1 on the y axis,
+  with the cost function on the vertical z axis.
+
+** Gradient Descent Algorithm
+- the gradient descent algorithm can help minimize functions and is
+  used in many machine learning techniques in our case this is
+  \(\overset{min}{\theta_{0},\theta_{1}}J(\theta_{0},\theta_{1})\)
+- start with some values for \(\theta_{0}, \theta_{1})\ (zero is common default value)
+- keep changing \(\theta_{0}, \theta_{1})\ to reduce
+  \(J(\theta_{0},\theta_{1})\) until you end up at a minimum
+  (hopefully)
+- repeat until convergence :: \(\theta_{j}:=\theta_{j}-\alpha\frac{\partial}{\partial\theta_{j}}J(\theta_{0},\theta_{1})}\)
+- assignment operator :: \(:=\)
+- learning rate :: \(\alpha\), controls how big of a step you take on the descent
+- derivative term :: \(\alpha\frac{\partial}{\partial\theta_{j}}J(\theta_{0},\theta_{1})\)
+- *\(\theta_{0}\) and \(\theta_{1}\) should be updated simultaneously
+  as they have inputs dependant on one another
+- at the local optimum your derivative is zero so \(\theta_{1}\) is unchanged
+- with a fixed learning rate \(\alpha\) each successive step is
+  smaller because the derivative slope value is smaller
+*** intuition
+- simplify to 1 feature :: \(\theta_{1}:=\theta_{1}-\alpha\frac{d}{d\theta_{j}}J(\theta_{1})}\)
+- graph a convex function and pick a point on that line
+- the derivative is the slope of the line that is tagent to the function
+- if the point we picked has a positive slope we get \(\theta_{1}:=\theta_{1}-\alpha(positive number)\) which helps us move closer to the minimum
+- if the point we picked has a negative slope we get \(\theta_{1}:=\theta_{1}-\alpha(negative number)\) which helps us move closer to the minimum
+*** pitfalls
+- if \(\alpha\) is too small than gradient descent can be slow
+- if \(\alpha\) is too big than you can overshoot the minimum and not converge
+** Putting it all together
+- we find the best linear fit to the data by finding the slope and
+  offset values that minimize the cost function
+- the cost function for linear regression is always going to be a
+  bow-shaped or "convex" function, so there is only one global optimum (no local optimum)
+- "batch" gradient descent means we are using all the training examples in every step of gradient descent (each update sum's examples)
+- there are other versions of gradient descent that window data sets
+- linear regression model :: \(h_{\theta}(x)=\theta_{0}+\theta_{1}x
+- cost function :: \(J(\theta_{0},\theta_{1}) = \frac{1}{2m}\sum\limits_{i=1}^{m}(h_{\theta}(x^{(i)})-y^{(i)})^2\)
+- gradient descent algorithm :: \(\theta_{j}:=\theta_{j}-\alpha\frac{\partial}{\partial\theta_{j}}J(\theta_{0},\theta_{1})} (for j=1 and j=0)\)
+- we find the best linear fit to the data by finding the slope and
+  offset values that minimize the cost function
+*** calculating the partial derivative
+- expand equation
+  - \(\frac{\partial}{\partial\theta_{j}}J(\theta_{0},\theta_{1}) = \frac{\partial}{\partial\theta_{j}}*\frac{1}{2m}\sum\limits_{i=1}^{m}(h_{\theta}(x^{(i)})-y^{(i)})^2\)
+  - \(\frac{\partial}{\partial\theta_{j}}*\frac{1}{2m}\sum\limits_{i=1}^{m}(h_{\theta}(x^{(i)})-y^{(i)})^2 = \(\frac{\partial}{\partial\theta_{j}}*\frac{1}{2m}\sum\limits_{i=1}^{m}(\theta_{0}+\theta_{1}x^{(i)}-y^{(i)})^2 \)
+- figure out partial derivative for \(j=0\) and \(j=1\)
+  - \(j = 0 : \frac{\partial}{\partial\theta_{0}}J(\theta_{0},\theta_{1}) = \frac{1}{m}\sum\limits_{i=1}^{m}(h_{\theta}(x^{(i)})-y^{(i)})\) \)
+  - \(j = 1 : \frac{\partial}{\partial\theta_{1}}J(\theta_{0},\theta_{1}) = \frac{1}{m}\sum\limits_{i=1}^{m}(h_{\theta}(x^{(i)})-y^{(i)})*x^{(i)}\) \)
+  - @todo calculate these derivations yourself
+- plug into gradient descent (repeat until convergence, simultaneously update assignments)
+  - \(\theta_{0}:=\theta_{0}-\alpha\frac{1}{m}\sum\limits_{i=1}^{m}(h_{\theta}(x^{(i)})-y^{(i)})\) \)
+  - \(\theta_{1}:=\theta_{1}-\alpha\frac{1}{m}\sum\limits_{i=1}^{m}(h_{\theta}(x^{(i)})-y^{(i)})*x^{(i)}\) \)
+** Linear Algebra Review
+- matrix :: rectangular array of values, dimension is determined by rows x columns
+- matrices of a specific dimension containing real number are often
+  notated like this: \mathbb{R}^{4x2}
+- to refer to specific elements matrix \(A\) you can use the notation
+  \(A_{ij}\) to meant the \(i\)th row, \(j\)th column
+- vector :: a nx1 matrix, notated as \(\mathbb{R}^{4}\), values
+            accessed as \(A_{i}\), a 4-dimensional vector has 4
+            elements
+- in mathematical notation 1-indexed notation is preferred
+- lowercase variables often denote vectors and uppercase variables denote matrices
+*** Addition and Scalar Multiplication
+- matrices of the same dimensions add in a straightforward way
+  - \(\begin{bmatrix}1 & 2 \\ 3 & 4 \\ 5 & 6 \end{bmatrix} + \begin{bmatrix}1 & 2 \\ 3 & 4 \\ 5 & 6 \end{bmatrix} = \begin{bmatrix}2 & 4 \\ 6 & 8 \\ 10 & 12 \end{bmatrix}\)
+- matrices of different dimensions cannot be added
+  - \(\begin{bmatrix}1 & 2 \\ 3 & 4 \\ 5 & 6\end{bmatrix} + \begin{bmatrix}1 & 2 \\ 3 & 4\end{bmatrix} = undefined\)
+- \(3\cdot\begin{bmatrix}1 & 2 \\ 3 & 4 \end{bmatrix} produces a matrix of the same dimension where each value is the product of the previous value and 3
+- scalar division works in a similar way
+*** Matrix Vector Multiplication
+- multiplying a m x n matrix with a vector is done calculating the dot
+  product of each matrix row with the vector, yeilding a m-dimensional
+  vector
+*** Matrix Matrix Multiplication
+- for matrix-matrix multiplication you break the second term into
+  vectors and then combine the columns at the end. a MxN matrix
+  multipled by a NxO matrix yields a MxO matrix. The N must match in
+  order to be able to multiply them
+- The ith column of matrix C is obtained by multiplying A with the ith column of B
+- To multiply two matrices, the number of columns of the first matrix must equal the number of rows of the second matrix.
+*** Matrix Multiplication Properties
+- regular multiplication is commutative, matrix multiplication is not (A x B is not equal to B x A)
+- regular multiplication is associative and so is matrix multiplication
+- for the identity matrix AB is equal to AB
+*** Matrix inverse and matrix transpose operation
+- if \(A\) is an \(mxm\) (square) matrix and has an inverse: \(AA^{-1}=A^{-1}A=I\)
+- some \(mxm\) matrices don't have an inverse (e.g. all values are zero)
+- singular or degenerate matrices are matrices that don't have an inverse
+
+* Week 2
+** Multivariant Linear Regression
+*** Notation
+- \(n\) :: number of features
+- \(m\) :: number of training examples
+- \(x^{(i)}\) :: input of the \(i^{th}\) training example
+- \(x_{j}^{(i)}\) :: value of feature \(j\) in \(i^{th}\) training example
+*** Hypothesis
+- previously with univariant linear regression our hypothesis was
+  \(h_{\theta}(x)=\theta_{0}+\theta_{1}x\)
+- for multivariant we have a polynomial hypothesis \(h_{\theta}(x)=\theta_{0}+\theta_{1}x_{1}+\theta_{2}x_{2}+...+\theta_{n}x_{n}\)
+- if you define \(x_{0}^{(i)} = 1\) than you can normalize the above as
+  \(h_{\theta}(x)=\theta_{0}x_{0}+\theta_{1}x_{1}+\theta_{2}x_{2}+...+\theta_{n}x_{n}\)
+  express in matrix multiplication as \(h_{\theta}(x)=\theta^{T}x\)
+- \(\theta^{T}x=\begin{bmatrix}\theta_{0} & \theta_{1} & ... & \theta_{n}\end{bmatrix}\begin{bmatrix}x_{0} \\ x_{1} \\ ... \\ x_{n} \end{bmatrix}=h_{\theta}(x)\)
+*** Gradient descent for multiple variables
+- the cost function is again \frac{1}{2m}\sum\limits_{i=1}^{m}(h_{\theta}(x^{(i)})-y^{(i)})^2\) but \(h_{\theta}(x^{(i)})=\theta^{T}(x^{i})\)
+- in the gradient descent formula the \(x\) in the derivative term has
+  to be altered slightly to account for more than one feature
+  \(\theta_{j}:=\theta_{j}-\alpha\frac{1}{m}\sum\limits_{i=1}^{m}(h_{\theta}(x^{(i)})-y^{(i)})*x_{j}^{(i)}\)
+- @todo understand this more
+*** Feature scaling & Mean normalization
+- why? :: if you ensure your features have similar ranges of values than
+  gradient descent with converge quicker
+- conventionally things are usually scaled \(-1\leq0\leq1\) but having
+  a similar range \(max-min\) across features is most important, not
+  the specific high and low value
+- feature scaling is dividing the input values by the range to get a range of 1
+- mean normalization is a technique for getting the average value of 0 for a feature
+- combining mean normalization & feature scaling :: \(x_{i}:=\frac{x_{i}-\mu_{i}}{s_{i}}\)
+     where \(\mu_{i}\) is average value of x in training set and \(s_{i}\) is the range \(max-min\) (or standard deviation)
+- @todo what is standard deviation
+*** Learning Rate
+- to make sure gradient descent is working correctly you can plot the
+  the cost function over the number iterations and the cost function
+  should go down as iterations go up
+- you can also automate the above by defining a threshold in code but
+  that can be tricky
+- if your cost function value is increasing over the number of
+  iterations or has a scalloped pattern than you learning rate is
+  probably too large
+- to choose a proper \(\alpha\) value plot \(J(\theta)\) with different successively larger learning rates \(.001, .003, .01, .03, .1, .3, 1, 3\)
+*** Features & Polynomial Regression
+- housing prices prediction :: \(h_{\theta}(x)=\theta_{0}+\theta_{1}\cdot frontage + \theta_{2} \cdot depth\)
+- instead of working with the simple features you have, you free to create your own compound features (e.g. \(area\) is a compound feature of \(frontage\cdotdepth\))
+- housing prices prediction with compound feature :: \(h_{\theta}(x)=\theta_{0}+\theta_{1}area\)
+- say we wanted had a hypothesis that a cubic function was a good fit
+  to our data
+  \(h_{\theta}(x)=\theta_{0}+\theta_{1}x+\theta_{2}x^{2}+\theta_{3}x^{3}\),
+  the machinery of linear regression still works for this
+  \(h_{\theta}(x)=\theta_{0}+\theta_{1}x_{1}+\theta_{2}x_{2}+\theta_{3}x_{3}=\theta_{0}+\theta_{1}(size)+\theta_{2}(size)^{2}+\theta_{3}(size)^3\)
+- some algorithms can solve the ~what features do i use?~ question by
+  automatically choosing what features to use and what functions you
+  want to fit to that data
+** Computing Parameters Analytics
+*** Normal Equation
+- solves for optimal values of the parameters to  \J(\theta\) in one step for some linear regression problems
+- there is no need to do feature scaling with the normal equation
+- \(\theta = (X^{T}X)^{-1}X^{T}y\) where \((X^{T}X)^{-1}\) is the inverse of the matrix \(X^{T}X\) gives you the optimal value for \(\theta\)
+| Gradient Descent                  | Normal Equation                                                                               |
+|-----------------------------------+-----------------------------------------------------------------------------------------------|
+| needs to choose \(\alpha\)        | no need to choose \(\alpha\)                                                                  |
+| needs many iterations             | don't need to iterate                                                                         |
+| scales with large set of features | doesn't scale with large set of features (inverting a very large +10,000 matrix is expensive) |
+|                                   | less versitile (doesn't work with logisitic regression)                                       |
+**** Intuition
+- in one-dimension given a scalar value for \(\theta\), and the quadratic function \(J(\theta)=a\theta^{2}+b\theta+c\)
+- to minimize, take the derivative and set to 0, \(\frac{\partial}{\partial\theta}J(\theta)= ... = 0\) and solve for \(\theta\)
+- in the multivariate version if you take the partial derivative of
+  \(J\) with respect to every parameter if \theta_{j} and set that to
+  \(0\) and solve for \(\theta_{0},...,\theta{n}\) than you can get
+  all the values to minimize the cost function
+
+
+
+
+
+
+
+
+
+**** computing this for Singular / Degenerate Matrices
+- If \(X^{T}X\) is noninvertible, the common causes might be:
+  - Redundant features, where two features are very closely related (i.e. they are linearly dependent)
+  - Too many features (e.g. m ≤ n). In this case, delete some features or use "regularization" (to be explained in a later lesson).
+Solutions to the above problems include deleting a feature that is linearly dependent with another or deleting one or more features when there are too many features.
+- @todo what types of matrices are non-invertible?
+* @todo
+- replicate Solvvy,
+- https://github.etsycorp.com/Engineering/Etsyweb/commit/0c6754d73fbae3b60310b2fdd1e9948f46e675de
+
+- come up with basic ML project ideas
+  - "cocktail party" algorithm is sweet, separates audio without any
+    complicated audio processing libraries
+- read more about mean squared error function
